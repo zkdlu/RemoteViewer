@@ -17,6 +17,8 @@ namespace RemoteController
             InputPasswordEventArgs args = new InputPasswordEventArgs(pw);
 
             InputPassword?.Invoke(this, args);
+
+            this.Close();
         }
     }
 }

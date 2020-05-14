@@ -2,14 +2,13 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows.Forms;
 
 namespace RemoteController
 {
-    public static class Server
+    public static class AcceptServer
     {
-        private static AsyncCallback asyncAccept;
-        private static AsyncCallback asyncReceive;
+        private static readonly AsyncCallback asyncAccept;
+        private static readonly AsyncCallback asyncReceive;
 
         public static event AcceptEventHandler Accepted;
 
@@ -25,7 +24,7 @@ namespace RemoteController
             private set;
         }
         
-        static Server()
+        static AcceptServer()
         {
             asyncAccept = new AsyncCallback(OnAcceptProc);
             asyncReceive = new AsyncCallback(OnReceiveProc);
@@ -36,6 +35,8 @@ namespace RemoteController
             var wrapObject = ar.AsyncState as WrapObject;
 
             Socket handler = wrapObject.Handler;
+            IPEndPoint remoteEndPoint = (IPEndPoint)handler.RemoteEndPoint;
+            
             byte[] buf = wrapObject.Buffer;
 
             if (handler == null)
@@ -48,8 +49,8 @@ namespace RemoteController
             {
                 string msg = Encoding.UTF8.GetString(buf, 0, count);
 
-                AcceptEventArgs e = new AcceptEventArgs(msg);
-                Accepted?.Invoke(typeof(Server), e);
+                AcceptEventArgs e = new AcceptEventArgs(remoteEndPoint, msg);
+                Accepted?.Invoke(typeof(AcceptServer), e);
             }
 
             wrapObject = new WrapObject

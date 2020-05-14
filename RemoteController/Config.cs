@@ -5,10 +5,10 @@ namespace RemoteController
 {
     public static class Config
     {
-        private static bool Debug = true;
+        private static readonly bool Debug = true;
         public enum Port
         {
-            Accept = 10200
+            Accept = 10200, Image = 10202
         }
 
         static Config()

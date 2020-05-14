@@ -10,39 +10,29 @@ namespace RemoteController
             InitializeComponent();
         }
 
-
         private void btnStart_Click(object sender, EventArgs e)
         {
-            string ip = Config.LocalIp;
-
-            txtId.Text = ip;
+            txtId.Text = Config.LocalIp;
             txtPw.Text = Config.Pw;
 
-            Server.Accepted += Server_Accepted;
-            Server.Start(ip);
+            RemoteHost.AcceptServerStart();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            
+            ControllerHost.ImageReceived += ControllerHost_ImageReceived;
         }
 
-        private void Server_Accepted(object sender, AcceptEventArgs e)
+        private void ControllerHost_ImageReceived(object sender, ReceiveImageEventArgs e)
         {
-            string myPw = Config.Pw;
-            string pw = e.Pw;
-
-            if (pw.Equals(myPw))
-            {
-                MessageBox.Show("패스워드가 일치하니 다음 작업을 진행하자");
-            }
+            picture.Image = e.Image;
         }
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
             string targetIp = txtTargetId.Text;
-            Client.Connect(targetIp);
-        }
 
+            ControllerHost.AcceptClientStart(targetIp);
+        }
     }
 }

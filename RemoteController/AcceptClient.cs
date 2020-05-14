@@ -2,10 +2,11 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Windows.Forms;
 
 namespace RemoteController
 {
-    public static class Client
+    public static class AcceptClient
     {
         public static Socket Socket
         {
@@ -19,7 +20,7 @@ namespace RemoteController
             private set;
         }
         
-        static Client()
+        static AcceptClient()
         {
         }
 
@@ -52,6 +53,9 @@ namespace RemoteController
 
         private static void PasswordForm_InputPassword(object sender, InputPasswordEventArgs e)
         {
+            ControllerHost.ImageServerStart();
+            MessageBox.Show("시작");
+
             string msg = e.Pw;
             byte[] buf = Encoding.UTF8.GetBytes(msg);
 
