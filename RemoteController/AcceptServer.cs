@@ -36,7 +36,7 @@ namespace RemoteController
 
             Socket handler = wrapObject.Handler;
             IPEndPoint remoteEndPoint = (IPEndPoint)handler.RemoteEndPoint;
-            
+
             byte[] buf = wrapObject.Buffer;
 
             if (handler == null)
@@ -58,7 +58,11 @@ namespace RemoteController
                 Handler = handler,
                 Buffer = new byte[256]
             };
-            handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+
+            if (handler != null)
+            {
+                handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+            }
         }
 
         private static void OnAcceptProc(IAsyncResult ar)
@@ -78,7 +82,10 @@ namespace RemoteController
                 Buffer = buf
             };
 
-            handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+            if (handler != null)
+            {
+                handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+            }
 
             Listener.BeginAccept(asyncAccept, null);
         }
@@ -87,22 +94,15 @@ namespace RemoteController
         {
             int acceptPort = (int)Config.Port.Accept;
 
-            try
-            {
-                IPAddress ipAddr = IPAddress.Parse(ip);
-                IPEndPoint localEndPoint = new IPEndPoint(ipAddr, acceptPort);
+            IPAddress ipAddr = IPAddress.Parse(ip);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddr, acceptPort);
 
-                LocalEndPoint = localEndPoint;
-                Listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                Listener.Bind(LocalEndPoint);
-                Listener.Listen(10);
+            LocalEndPoint = localEndPoint;
+            Listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Listener.Bind(LocalEndPoint);
+            Listener.Listen(10);
 
-                Listener.BeginAccept(asyncAccept, null);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            Listener.BeginAccept(asyncAccept, null);
         }
     }
 }

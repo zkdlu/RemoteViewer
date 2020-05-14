@@ -37,18 +37,11 @@ namespace RemoteController
                 throw new Exception("Not Exists Server object");
             }
 
-            try
-            {
-                Socket handler = Listener.EndAccept(ar);
+            Socket handler = Listener.EndAccept(ar);
 
-                OnReceive(handler);
+            OnReceive(handler);
 
-                Listener.BeginAccept(asyncAccept, null);
-            }
-            catch
-            {
-                throw new Exception("Receive Image Error");
-            }
+            Listener.BeginAccept(asyncAccept, null);
         }
 
         private static void OnReceive(Socket handler)
@@ -84,22 +77,15 @@ namespace RemoteController
         {
             int imagePort = (int)Config.Port.Image;
 
-            try
-            {
-                IPAddress ipAddr = IPAddress.Parse(ip);
-                IPEndPoint localEndPoint = new IPEndPoint(ipAddr, imagePort);
+            IPAddress ipAddr = IPAddress.Parse(ip);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddr, imagePort);
 
-                LocalEndPoint = localEndPoint;
-                Listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                Listener.Bind(LocalEndPoint);
-                Listener.Listen(10);
+            LocalEndPoint = localEndPoint;
+            Listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Listener.Bind(LocalEndPoint);
+            Listener.Listen(10);
 
-                Listener.BeginAccept(asyncAccept, null);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            Listener.BeginAccept(asyncAccept, null);
         }
     }
 }

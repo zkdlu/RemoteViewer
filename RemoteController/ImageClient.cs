@@ -26,27 +26,20 @@ namespace RemoteController
 
         public static void Connect(string ip)
         {
-            try
-            {
-                int acceptPort = (int)Config.Port.Image;
+            int acceptPort = (int)Config.Port.Image;
 
-                IPAddress ipAddr = IPAddress.Parse(ip);
-                IPEndPoint remoteEndPoint = new IPEndPoint(ipAddr, acceptPort);
-                RemoteEndPoint = remoteEndPoint;
+            IPAddress ipAddr = IPAddress.Parse(ip);
+            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddr, acceptPort);
+            RemoteEndPoint = remoteEndPoint;
 
-                Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                Socket.Connect(RemoteEndPoint);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            Socket.Connect(RemoteEndPoint);
         }
 
         public static bool SendImage(Image img)
         {
-            if (Socket == null  && !Socket.Connected)
+            if (Socket == null || !Socket.Connected)
             {
                 return false;
             }
@@ -59,16 +52,20 @@ namespace RemoteController
                 int len = buf.Length;
 
                 byte[] lenBuf = BitConverter.GetBytes(len);
-                Socket.Send(lenBuf);
 
-                int trans = 0;
-                while (trans < len)
+                if (Socket != null)
                 {
-                    trans += Socket.Send(buf, trans, len - trans, SocketFlags.None);
-                }
+                    Socket.Send(lenBuf);
 
-                Socket.Close();
+                    int trans = 0;
+                    while (trans < len)
+                    {
+                        trans += Socket.Send(buf, trans, len - trans, SocketFlags.None);
+                    }
+                    Socket.Close();
+                }
                 Socket = null;
+
                 return true;
             }
         }

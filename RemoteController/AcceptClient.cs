@@ -26,35 +26,27 @@ namespace RemoteController
 
         public static void Connect(string ip)
         {
-            try
+            int acceptPort = (int)Config.Port.Accept;
+
+            IPAddress ipAddr = IPAddress.Parse(ip);
+            IPEndPoint remoteEndPoint = new IPEndPoint(ipAddr, acceptPort);
+            RemoteEndPoint = remoteEndPoint;
+
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            Socket.Connect(RemoteEndPoint);
+
+            if (Socket.Connected)
             {
-                int acceptPort = (int)Config.Port.Accept;
-
-                IPAddress ipAddr = IPAddress.Parse(ip);
-                IPEndPoint remoteEndPoint = new IPEndPoint(ipAddr, acceptPort);
-                RemoteEndPoint = remoteEndPoint;
-
-                Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-                Socket.Connect(RemoteEndPoint);
-
-                if (Socket.Connected)
-                {
-                    PasswordForm passwordForm = new PasswordForm();
-                    passwordForm.InputPassword += PasswordForm_InputPassword;
-                    passwordForm.ShowDialog();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
+                PasswordForm passwordForm = new PasswordForm();
+                passwordForm.InputPassword += PasswordForm_InputPassword;
+                passwordForm.ShowDialog();
             }
         }
 
         private static void PasswordForm_InputPassword(object sender, InputPasswordEventArgs e)
         {
             ControllerHost.ImageServerStart();
-            MessageBox.Show("시작");
 
             string msg = e.Pw;
             byte[] buf = Encoding.UTF8.GetBytes(msg);
