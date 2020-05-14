@@ -1,0 +1,10 @@
+E:\study\C#\RemoteController\RemoteController\bin\Debug\RemoteController.exe.config
+E:\study\C#\RemoteController\RemoteController\bin\Debug\RemoteController.exe
+E:\study\C#\RemoteController\RemoteController\bin\Debug\RemoteController.pdb
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.csprojAssemblyReference.cache
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.MainForm.resources
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.Properties.Resources.resources
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.csproj.GenerateResource.cache
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.csproj.CoreCompileInputs.cache
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.exe
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.pdb
