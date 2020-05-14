@@ -8,3 +8,4 @@ E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.csproj.
 E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.csproj.CoreCompileInputs.cache
 E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.exe
 E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.pdb
+E:\study\C#\RemoteController\RemoteController\obj\Debug\RemoteController.PasswordForm.resources
