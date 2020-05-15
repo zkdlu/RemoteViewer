@@ -37,30 +37,47 @@ namespace RemoteController
                 throw new Exception("Not Exists Server object");
             }
 
-            Socket handler = Listener.EndAccept(ar);
+            if (Listener != null)
+            {
+                try
+                {
+                    Socket handler = Listener.EndAccept(ar);
 
-            OnReceive(handler);
+                    OnReceive(handler);
 
-            Listener.BeginAccept(asyncAccept, null);
+                    Listener.BeginAccept(asyncAccept, null);
+                }
+                catch (SocketException e) { }
+            }
         }
 
         private static void OnReceive(Socket handler)
         {
-            byte[] lenBuf = new byte[4];
-            handler.Receive(lenBuf);
-
-            int len = BitConverter.ToInt32(lenBuf, 0);
-            byte[] buf = new byte[len];
-
-            int trans = 0;
-            while (trans < len)
+            if (handler != null)
             {
-                trans += handler.Receive(buf, trans, len - trans, SocketFlags.None);
-            }
+                try
+                {
+                    byte[] lenBuf = new byte[4];
+                    handler.Receive(lenBuf);
 
-            Image image = ConvertImage(buf);
-            ReceiveImageEventArgs args = new ReceiveImageEventArgs(image);
-            ImageReceived?.Invoke(typeof(ImageServer), args);
+                    int len = BitConverter.ToInt32(lenBuf, 0);
+                    byte[] buf = new byte[len];
+
+                    int trans = 0;
+                    while (trans < len)
+                    {
+                        trans += handler.Receive(buf, trans, len - trans, SocketFlags.None);
+                    }
+
+                    if (len > 0)
+                    {
+                        Image image = ConvertImage(buf);
+                        ReceiveImageEventArgs args = new ReceiveImageEventArgs(image);
+                        ImageReceived?.Invoke(typeof(ImageServer), args);
+                    }
+                }
+                catch (SocketException e) { }
+            }
         }
 
         private static Image ConvertImage(byte[] data)

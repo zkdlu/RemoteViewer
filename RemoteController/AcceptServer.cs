@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -23,7 +24,7 @@ namespace RemoteController
             get;
             private set;
         }
-        
+
         static AcceptServer()
         {
             asyncAccept = new AsyncCallback(OnAcceptProc);
@@ -44,24 +45,28 @@ namespace RemoteController
                 throw new Exception("Not Exists Handler object");
             }
 
-            int count = handler.EndReceive(ar);
-            if (count > 0)
-            {
-                string msg = Encoding.UTF8.GetString(buf, 0, count);
-
-                AcceptEventArgs e = new AcceptEventArgs(remoteEndPoint, msg);
-                Accepted?.Invoke(typeof(AcceptServer), e);
-            }
-
-            wrapObject = new WrapObject
-            {
-                Handler = handler,
-                Buffer = new byte[256]
-            };
-
             if (handler != null)
             {
-                handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+                try
+                {
+                    int count = handler.EndReceive(ar);
+                    if (count > 0)
+                    {
+                        string msg = Encoding.UTF8.GetString(buf, 0, count);
+
+                        AcceptEventArgs e = new AcceptEventArgs(remoteEndPoint, msg);
+                        Accepted?.Invoke(typeof(AcceptServer), e);
+                    }
+
+                    wrapObject = new WrapObject
+                    {
+                        Handler = handler,
+                        Buffer = new byte[256]
+                    };
+
+                    handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+                }
+                catch (SocketException e) { }
             }
         }
 
@@ -72,22 +77,29 @@ namespace RemoteController
                 throw new Exception("Not Exists Server object");
             }
 
-            Socket handler = Listener.EndAccept(ar);
-
-            byte[] buf = new byte[256];
-
-            var wrapObject = new WrapObject
+            if (Listener != null)
             {
-                Handler = handler,
-                Buffer = buf
-            };
+                try
+                {
+                    Socket handler = Listener.EndAccept(ar);
 
-            if (handler != null)
-            {
-                handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+                    byte[] buf = new byte[256];
+
+                    var wrapObject = new WrapObject
+                    {
+                        Handler = handler,
+                        Buffer = buf
+                    };
+
+                    if (handler != null)
+                    {
+                        handler.BeginReceive(buf, 0, buf.Length, SocketFlags.None, asyncReceive, wrapObject);
+                    }
+
+                    Listener.BeginAccept(asyncAccept, null);
+                }
+                catch (SocketException e) { }
             }
-
-            Listener.BeginAccept(asyncAccept, null);
         }
 
         public static void Start(string ip)

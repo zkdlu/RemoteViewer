@@ -11,7 +11,7 @@ namespace RemoteController
     public static class ImageClient
     {
         public delegate bool SendImageDele(Image img);
-        
+
         public static Socket Socket
         {
             get;
@@ -19,9 +19,9 @@ namespace RemoteController
         }
 
         public static IPEndPoint RemoteEndPoint
-        { 
-            get; 
-            private set; 
+        {
+            get;
+            private set;
         }
 
         public static void Connect(string ip)
@@ -53,18 +53,22 @@ namespace RemoteController
 
                 byte[] lenBuf = BitConverter.GetBytes(len);
 
-                if (Socket != null)
+                try
                 {
-                    Socket.Send(lenBuf);
-
-                    int trans = 0;
-                    while (trans < len)
+                    if (Socket != null)
                     {
-                        trans += Socket.Send(buf, trans, len - trans, SocketFlags.None);
+                        Socket.Send(lenBuf);
+
+                        int trans = 0;
+                        while (trans < len)
+                        {
+                            trans += Socket.Send(buf, trans, len - trans, SocketFlags.None);
+                        }
+                        Socket.Close();
                     }
-                    Socket.Close();
+                    Socket = null;
                 }
-                Socket = null;
+                catch (SocketException e) { }
 
                 return true;
             }
